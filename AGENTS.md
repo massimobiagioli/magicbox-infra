@@ -50,3 +50,17 @@ Custom slash commands in `.claude/commands/`.
   plan from `plan/` end-to-end, then write its ADR. Usage: `/implement-plan 001`.
 
 > When a new command is added under `.claude/commands/`, reference it here.
+
+## ADR Registry
+
+Record every ADR here immediately after writing it (rule enforced by the
+`write-adr` skill). Future implementations must read this table before designing
+a new approach — decisions here are binding unless explicitly superseded.
+
+| # | Title | Status | Date |
+|---|-------|--------|------|
+| 001 | [Bootstrap](adr/001-bootstrap.md) | Accepted | 2026-06-25 |
+| 002 | [Alpine OS Update](adr/002-alpine-update.md) | Accepted | 2026-06-25 |
+| 003 | [group_vars Loading Layout](adr/003-group-vars-layout.md) | Accepted | 2026-06-25 |
+
+> When a new ADR is created, append a row to this table.

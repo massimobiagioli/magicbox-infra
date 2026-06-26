@@ -38,3 +38,6 @@ record the decision, not a narrative.
 - One ADR per implemented plan; never edit a past ADR — supersede it with a new
   one referencing the old.
 - Concise over complete; link instead of restating docs.
+- After writing the ADR file, **add a one-line entry to the ADR Registry in
+  `AGENTS.md`** under the `## ADR Registry` section:
+  `| NNN | [Title](adr/NNN-<slug>.md) | Accepted | YYYY-MM-DD |`
