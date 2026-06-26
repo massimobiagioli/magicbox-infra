@@ -1,0 +1,20 @@
+[package]
+name = "magicbox-infra"
+version = "0.1.0"
+edition = "2021"
+description = "Command-line utility that controls the Magicbox infrastructure via Ansible."
+license = "MIT"
+
+[[bin]]
+name = "magicbox"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
+serde_yaml = "0.9"
+thiserror = "2"
+
+[dev-dependencies]
+clap = { version = "4", features = ["derive"] }

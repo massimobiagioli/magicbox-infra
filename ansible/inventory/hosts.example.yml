@@ -1,0 +1,15 @@
+# Inventory template for the Magicbox. Copy to hosts.yml and fill in real
+# values; hosts.yml is gitignored and never committed.
+#
+# The `magicbox` group is the host group every playbook targets.
+all:
+  children:
+    magicbox:
+      hosts:
+        magicbox-host:
+          ansible_host: 192.168.x.x            # Magicbox LAN address
+          ansible_user: <ssh_user>             # SSH user with the needed access
+          ansible_ssh_private_key_file: ~/.ssh/<key>
+          ansible_python_interpreter: /usr/bin/python3
+          # Escalation defaults (doas) live in group_vars/all/vars.yml. Override
+          # here only if this host differs, e.g. os_update_become: false for root.

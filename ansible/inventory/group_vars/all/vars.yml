@@ -1,0 +1,18 @@
+# Non-secret variables shared by all playbooks (committed).
+# Secrets live in the gitignored, ansible-vault-encrypted vault.yml alongside
+# this file. See the manage-secrets skill.
+
+# Minimum uptime (seconds) below which the host is treated as freshly rebooted.
+# Informational only; the healthcheck reports it but does not fail on it.
+healthcheck_min_uptime_seconds: 0
+
+# Optional Portainer endpoint probed by the healthcheck. Leave empty to skip
+# the check; set e.g. "https://127.0.0.1:9443/api/status" to enable it.
+portainer_healthcheck_url: ""
+
+# Privilege escalation for state-changing playbooks (e.g. os-update). Alpine has
+# no sudo by default; it uses `doas`. The SSH user must have a NOPASS doas rule
+# (see README) so non-interactive runs can escalate.
+ansible_become_method: doas
+# Set to false only when ansible_user is already root (no escalation needed).
+os_update_become: true

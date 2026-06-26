@@ -1,0 +1,60 @@
+---
+# healthcheck.yml — verify the Magicbox is reachable and healthy.
+#
+# Read-only and idempotent: every task only inspects state. A second run reports
+# no changes. Backs the `magicbox healthcheck` CLI command.
+- name: Magicbox healthcheck
+  hosts: magicbox
+  gather_facts: true
+
+  tasks:
+    - name: Confirm SSH connectivity
+      ansible.builtin.ping:
+
+    - name: Confirm the host runs Alpine Linux
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.distribution == "Alpine"
+        success_msg: "OS is Alpine Linux {{ ansible_facts.distribution_version }}."
+        fail_msg: >-
+          Expected Alpine Linux but found
+          {{ ansible_facts.distribution }} — wrong host?
+
+    - name: Report uptime and load (sanity)
+      ansible.builtin.debug:
+        msg: >-
+          Uptime {{ (ansible_facts.uptime_seconds | default(0)) }}s,
+          load average {{ ansible_facts.loadavg | default('n/a') }}.
+
+    - name: Confirm the Docker daemon is up
+      # Use the Docker CLI (part of the baseline) rather than the docker_host_info
+      # module, which would require the Docker SDK for Python on the Magicbox.
+      # `docker info` exits non-zero if the daemon is unreachable, so the task
+      # fails the healthcheck on its own; it changes nothing.
+      ansible.builtin.command:
+        cmd: "docker info --format '{{ '{{.ServerVersion}}' }}'"
+      register: docker_info
+      changed_when: false
+
+    - name: Report Docker daemon status
+      ansible.builtin.debug:
+        msg: "Docker {{ docker_info.stdout }} is running."
+
+    - name: Confirm Portainer endpoint is reachable (optional)
+      ansible.builtin.uri:
+        url: "{{ portainer_healthcheck_url }}"
+        method: GET
+        validate_certs: false
+        status_code: [200, 401, 403]
+      register: portainer_probe
+      changed_when: false
+      failed_when: false
+      when: portainer_healthcheck_url | default('') | length > 0
+
+    - name: Report Portainer reachability
+      ansible.builtin.debug:
+        msg: >-
+          Portainer endpoint returned HTTP {{ portainer_probe.status }}.
+      when:
+        - portainer_healthcheck_url | default('') | length > 0
+        - portainer_probe.status is defined

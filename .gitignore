@@ -1,0 +1,13 @@
+# Rust build artifacts
+/target
+
+# Real secrets — never commit (templates with the *.example suffix are kept)
+/secrets/.vault_pass
+/ansible/inventory/group_vars/all/vault.yml
+/ansible/inventory/hosts.yml
+
+# Any machine-local override
+*.local.*
+
+# OS / editor cruft
+.DS_Store

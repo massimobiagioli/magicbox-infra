@@ -1,0 +1,49 @@
+---
+# os-update.yml — refresh the package index and upgrade all Alpine packages.
+#
+# State-changing and idempotent: a second run upgrades nothing and reports no
+# changes. Backs the `magicbox os-update` CLI command.
+#
+# Only the apk tasks escalate (least privilege); fact gathering and the
+# read-only reboot hint run as the SSH user. Escalation honours the become
+# settings in group_vars/all/vars.yml (`ansible_become_method: doas` on Alpine);
+# set `os_update_become: false` when the SSH user is already root.
+- name: Alpine OS update
+  hosts: magicbox
+  gather_facts: true
+
+  tasks:
+    - name: Update and upgrade Alpine packages
+      become: "{{ os_update_become | default(true) }}"
+      block:
+        - name: Refresh the apk package index
+          community.general.apk:
+            update_cache: true
+
+        - name: Upgrade all installed packages
+          community.general.apk:
+            upgrade: true
+          register: apk_upgrade
+
+    - name: Report upgrade outcome
+      ansible.builtin.debug:
+        msg: >-
+          {{ 'Packages were upgraded.' if apk_upgrade.changed
+             else 'System already up to date.' }}
+
+    - name: List installed kernel module sets (reboot hint, read-only)
+      ansible.builtin.command:
+        cmd: ls -1 /lib/modules
+      register: installed_kernels
+      changed_when: false
+      failed_when: false
+
+    - name: Report whether a reboot is recommended
+      ansible.builtin.debug:
+        msg: >-
+          {{ ('A kernel other than the running one (' ~ ansible_facts.kernel ~
+              ') is installed; a reboot is recommended.')
+             if (installed_kernels.stdout_lines | default([])
+                 | difference([ansible_facts.kernel]) | length > 0)
+             else 'Running the latest installed kernel; no reboot required.' }}
+      when: installed_kernels.rc == 0
