@@ -8,7 +8,7 @@ healthcheck_min_uptime_seconds: 0
 
 # Optional Portainer endpoint probed by the healthcheck. Leave empty to skip
 # the check; set e.g. "https://127.0.0.1:9443/api/status" to enable it.
-portainer_healthcheck_url: ""
+portainer_healthcheck_url: "https://{{ ansible_host }}:9443/api/status"
 
 # Privilege escalation for state-changing playbooks (e.g. os-update). Alpine has
 # no sudo by default; it uses `doas`. The SSH user must have a NOPASS doas rule

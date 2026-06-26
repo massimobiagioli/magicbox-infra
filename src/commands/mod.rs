@@ -5,3 +5,4 @@
 
 pub mod healthcheck;
 pub mod os_update;
+pub mod portainer_status;

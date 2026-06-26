@@ -62,5 +62,6 @@ a new approach — decisions here are binding unless explicitly superseded.
 | 001 | [Bootstrap](adr/001-bootstrap.md) | Accepted | 2026-06-25 |
 | 002 | [Alpine OS Update](adr/002-alpine-update.md) | Accepted | 2026-06-25 |
 | 003 | [group_vars Loading Layout](adr/003-group-vars-layout.md) | Accepted | 2026-06-25 |
+| 004 | [Check Portainer Status](adr/004-check-portainer-status.md) | Accepted | 2026-06-26 |
 
 > When a new ADR is created, append a row to this table.

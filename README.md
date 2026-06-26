@@ -32,6 +32,33 @@ On the Magicbox (the managed node):
   inventory. Without it, even `healthcheck` fails at fact gathering with
   `/bin/sh: python3: not found`.
 
+- **Avahi** — makes the Magicbox discoverable on the local network as
+  `magicbox.local` via mDNS (Multicast DNS, also known as Bonjour on macOS).
+  Without it, `magicbox.local` only resolves from the Mac side (where Bonjour
+  is built in); the Magicbox itself and any other Linux host on the network
+  cannot resolve the name.
+
+  Install and enable it once **as root**:
+  ```sh
+  apk add avahi avahi-tools dbus
+  rc-update add dbus boot
+  rc-update add avahi-daemon boot
+  rc-service dbus start
+  rc-service avahi-daemon start
+  ```
+
+  How it works: Avahi implements the mDNS/DNS-SD protocol (RFC 6762). It
+  multicasts the hostname over UDP port 5353 so that any device on the same
+  subnet can resolve `<hostname>.local` without a DNS server. The `dbus`
+  daemon is a required dependency for Avahi on Alpine. The `avahi-tools`
+  package provides `avahi-resolve` and `avahi-browse` for troubleshooting.
+
+  Verify the name resolves from another machine on the network:
+  ```sh
+  avahi-resolve -n magicbox.local   # from another Linux host with avahi
+  dns-sd -G v4 magicbox.local       # from macOS
+  ```
+
 ## Setup
 
 ### 1. SSH key

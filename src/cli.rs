@@ -34,6 +34,8 @@ pub enum Commands {
     Healthcheck,
     /// Update and upgrade Alpine packages on the Magicbox.
     OsUpdate,
+    /// Check that the Portainer instance is reachable.
+    PortainerStatus,
 }
 
 impl Cli {
@@ -47,6 +49,10 @@ impl Cli {
             Some(Commands::OsUpdate) => {
                 let config = Config::discover();
                 commands::os_update::run(&config)
+            }
+            Some(Commands::PortainerStatus) => {
+                let config = Config::discover();
+                commands::portainer_status::run(&config)
             }
             None => {
                 Self::print_help();

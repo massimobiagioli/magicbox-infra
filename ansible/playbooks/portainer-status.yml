@@ -1,0 +1,24 @@
+---
+# portainer-status.yml — verify the Portainer instance is reachable.
+#
+# Read-only and idempotent: probes the Portainer API status endpoint and
+# reports the result. Fails the play if the endpoint is unreachable.
+# Backs the `magicbox portainer-status` CLI command.
+- name: Portainer status
+  hosts: magicbox
+  gather_facts: false
+
+  tasks:
+    - name: Probe Portainer API status endpoint
+      ansible.builtin.uri:
+        url: "{{ portainer_healthcheck_url }}"
+        method: GET
+        validate_certs: false
+        status_code: [200, 401, 403]
+      register: portainer_probe
+      changed_when: false
+      delegate_to: localhost
+
+    - name: Report Portainer reachability
+      ansible.builtin.debug:
+        msg: "Portainer endpoint returned HTTP {{ portainer_probe.status }}."
